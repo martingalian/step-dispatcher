@@ -8,7 +8,7 @@ use StepDispatcher\Abstracts\StepStatus;
 
 final class NotRunnable extends StepStatus
 {
-    public const VALUE = 'not_runnable';
+    public const VALUE = 'not-runnable';
 
     public function value(): string
     {
