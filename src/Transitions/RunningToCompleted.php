@@ -29,17 +29,6 @@ final class RunningToCompleted extends Transition
          * Only allow transition if all child steps are concluded.
          */
         if ($this->step->isParent() && ! $this->step->childStepsAreConcluded()) {
-            // Log if the step is a parent and the child steps are not concluded
-            info_if("[RunningToCompleted.handle] Step ID {$this->step->id} is a parent, but child steps are not concluded, transition denied");
-
-            /*
-            $this->step->logApplicationEvent(
-                'Step is a parent, but child steps are not concluded, transition denied',
-                self::class,
-                __FUNCTION__
-            );
-            */
-
             return $this->step;
         }
 
@@ -47,17 +36,6 @@ final class RunningToCompleted extends Transition
         $this->step->completed_at = now();
         $this->step->is_throttled = false; // Clear throttle flag - step is no longer waiting
         $this->step->save();
-
-        // Log after the state is saved
-        info_if("[RunningToCompleted.handle] Step ID {$this->step->id} successfully transitioned to Completed");
-
-        /*
-        $this->step->logApplicationEvent(
-            'Step successfully transitioned to Completed',
-            self::class,
-            __FUNCTION__
-        );
-        */
 
         return $this->step;
     }

@@ -30,17 +30,6 @@ final class RunningToSkipped extends Transition
         $this->step->is_throttled = false; // Clear throttle flag - step is no longer waiting
         $this->step->save(); // Save the transition
 
-        // Log after the state is saved
-        info_if("[RunningToSkipped.handle] Step ID {$this->step->id} successfully transitioned to Skipped");
-
-        /*
-        $this->step->logApplicationEvent(
-            'Step successfully transitioned to Skipped',
-            self::class,
-            __FUNCTION__
-        );
-        */
-
         return $this->step;
     }
 }

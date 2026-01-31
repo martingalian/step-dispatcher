@@ -21,16 +21,6 @@ final class RunningToStopped extends Transition
     public function canTransition(): bool
     {
         if (! ($this->step->state instanceof Running)) {
-            info_if("[RunningToStopped.canTransition] Step ID {$this->step->id} is not in Running state, transition denied");
-
-            /*
-            $this->step->logApplicationEvent(
-                'Step is not in Running state, transition denied',
-                self::class,
-                __FUNCTION__
-            );
-            */
-
             return false;
         }
 
@@ -43,17 +33,6 @@ final class RunningToStopped extends Transition
         $this->step->state = new Stopped($this->step);
         $this->step->is_throttled = false; // Clear throttle flag - step is no longer waiting
         $this->step->save();
-
-        // Log after the state is saved
-        info_if("[RunningToStopped.handle] Step ID {$this->step->id} successfully transitioned to Stopped");
-
-        /*
-        $this->step->logApplicationEvent(
-            'Step successfully transitioned to Stopped',
-            self::class,
-            __FUNCTION__
-        );
-        */
 
         return $this->step;
     }

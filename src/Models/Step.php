@@ -169,17 +169,11 @@ final class Step extends BaseModel
 
     public function previousIndexIsConcluded()
     {
-        log_step($this->id, "[previousIndexIsConcluded] Evaluating previous index for Step ID {$this->id} with index {$this->index} in block {$this->block_uuid}");
-
         if ($this->index === 1) {
-            log_step($this->id, "[previousIndexIsConcluded] Step ID {$this->id} is the first step (index 1), returning true.");
-
             return true;
         }
 
         if ($this->index === null && $this->isChild() && $this->parentIsRunning()) {
-            log_step($this->id, "[previousIndexIsConcluded] Step ID {$this->id} is a child, its parent is already running, and I dont have an index. Returning true");
-
             return true;
         }
 
@@ -199,31 +193,17 @@ final class Step extends BaseModel
 
         $previousSteps = $query->get();
 
-        log_step($this->id, '[previousIndexIsConcluded] Found '.$previousSteps->count()." previous step(s) for Step ID {$this->id}.");
-
         if ($previousSteps->isEmpty()) {
-            log_step($this->id, "[previousIndexIsConcluded] No previous steps found for Step ID {$this->id}, returning false.");
-
             return false;
         }
 
-        $previousStepsIds = $previousSteps->pluck('id')->implode(',');
-        log_step($this->id, 'Previous Steps Ids: '.$previousStepsIds);
-
         $previousSteps->each(static function ($step) {
             $step->refresh();
-            log_step($step->id, "[previousIndexIsConcluded] Previous Step ID {$step->id} has state ".get_class($step->state));
         });
 
         $result = $previousSteps->every(
             fn ($step) => in_array(get_class($step->state), $this->concludedStepStates(), strict: true)
         );
-
-        if ($result) {
-            log_step($this->id, "[previousIndexIsConcluded] All previous steps for Step ID {$this->id} have concluded.");
-        } else {
-            log_step($this->id, "[previousIndexIsConcluded] Not all previous steps for Step ID {$this->id} have concluded.");
-        }
 
         return $result;
     }
@@ -235,14 +215,10 @@ final class Step extends BaseModel
 
     public function childStepsAreConcludedFromMap($childStepsByBlock): bool
     {
-        log_step($this->id, "➡️ [Step.childStepsAreConcludedFromMap] START check for parent ID {$this->id} / child_block_uuid: {$this->child_block_uuid}");
-
         $children = $childStepsByBlock[$this->child_block_uuid]
         ?? (method_exists($childStepsByBlock, 'get') ? $childStepsByBlock->get($this->child_block_uuid) : null);
 
         if (empty($children)) {
-            log_step($this->id, "⛔ [Step.childStepsAreConcludedFromMap] No children found for block {$this->child_block_uuid}, returning FALSE.");
-
             return false;
         }
 
@@ -250,37 +226,24 @@ final class Step extends BaseModel
             $children = collect($children);
         }
 
-        log_step($this->id, '[Step.childStepsAreConcludedFromMap] 🔍 Found '.$children->count()." children for block {$this->child_block_uuid}");
-
         foreach ($children as $child) {
             $stateClass = get_class($child->state);
-            log_step($child->id, "[Step.childStepsAreConcludedFromMap] 🧒 Child ID {$child->id} | State: ".class_basename($stateClass));
 
             if ($child->isDormantResolveException()) {
-                log_step($child->id, "[Step.childStepsAreConcludedFromMap] 💤 Child ID {$child->id} is dormant resolve-exception, skipping.");
-
                 continue;
             }
 
             if (! in_array($stateClass, $this->concludedStepStates(), strict: true)) {
-                log_step($child->id, "[Step.childStepsAreConcludedFromMap] ❌ Child ID {$child->id} is NOT in concluded states. Returning FALSE.");
-
                 return false;
             }
 
             if ($child->isParent()) {
-                log_step($child->id, "[Step.childStepsAreConcludedFromMap] 🔁 Child ID {$child->id} is a parent. Recursing into its children.");
                 $recurse = $child->childStepsAreConcludedFromMap($childStepsByBlock);
-                log_step($child->id, "[Step.childStepsAreConcludedFromMap] 🔁 Recursion result for child ID {$child->id}: ".($recurse ? '✅ TRUE' : '❌ FALSE'));
                 if (! $recurse) {
-                    log_step($child->id, "[Step.childStepsAreConcludedFromMap] ⛔ Recursion failed for child ID {$child->id}. Returning FALSE.");
-
                     return false;
                 }
             }
         }
-
-        log_step($this->id, "[Step.childStepsAreConcludedFromMap] ✅ All children (and grandchildren) of parent ID {$this->id} are concluded. Returning TRUE.");
 
         return true;
     }

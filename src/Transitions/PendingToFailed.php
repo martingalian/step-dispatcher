@@ -20,18 +20,8 @@ final class PendingToFailed extends Transition
 
     public function canTransition(): bool
     {
-        // Only allow transition if the current state is Running
+        // Only allow transition if the current state is Pending
         if (! ($this->step->state instanceof Pending)) {
-            info_if("[RunningToFailed.canTransition] Step ID {$this->step->id} is not in Pending state, transition denied");
-
-            /*
-            $this->step->logApplicationEvent(
-                'Step is not in Pending state, transition denied',
-                self::class,
-                __FUNCTION__
-            );
-            */
-
             return false;
         }
 
@@ -45,16 +35,6 @@ final class PendingToFailed extends Transition
         $this->step->completed_at = now();
         $this->step->is_throttled = false; // Clear throttle flag - step is no longer waiting
         $this->step->save(); // Save the step after state transition
-
-        info_if("[RunningToFailed.handle] Step ID {$this->step->id} successfully transitioned to Failed");
-
-        /*
-        $this->step->logApplicationEvent(
-            'Step successfully transitioned to Failed',
-            self::class,
-            __FUNCTION__
-        );
-        */
 
         // Return the step for further processing if needed
         return $this->step;

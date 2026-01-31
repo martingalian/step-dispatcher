@@ -5,29 +5,6 @@ declare(strict_types=1);
 return [
     /*
     |--------------------------------------------------------------------------
-    | Info If - Conditional Logging
-    |--------------------------------------------------------------------------
-    |
-    | When enabled, info_if() helper function will output to Laravel log.
-    |
-    */
-    'info_if' => env('STEP_DISPATCHER_INFO_IF', false),
-
-    /*
-    |--------------------------------------------------------------------------
-    | Step Dispatcher Logging
-    |--------------------------------------------------------------------------
-    |
-    | Enable detailed logging for step execution. Logs are stored in
-    | storage/logs/steps/{step_id}/step.log and storage/logs/dispatcher.log
-    |
-    */
-    'logging' => [
-        'enabled' => env('STEP_DISPATCHER_LOGGING', false),
-    ],
-
-    /*
-    |--------------------------------------------------------------------------
     | Valid Queues
     |--------------------------------------------------------------------------
     |

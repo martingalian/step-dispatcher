@@ -27,16 +27,6 @@ final class NotRunnableToPending extends Transition
         $this->step->state = new Pending($this->step);
         $this->step->save();
 
-        info_if("[NotRunnableToPending.handle] Step ID {$this->step->id} transitioned to Pending");
-
-        /*
-        $this->step->logApplicationEvent(
-            'Step transitioned to Pending',
-            self::class,
-            __FUNCTION__
-        );
-        */
-
         return $this->step;
     }
 }
