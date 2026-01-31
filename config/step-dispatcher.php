@@ -1,0 +1,71 @@
+<?php
+
+declare(strict_types=1);
+
+return [
+    /*
+    |--------------------------------------------------------------------------
+    | Info If - Conditional Logging
+    |--------------------------------------------------------------------------
+    |
+    | When enabled, info_if() helper function will output to Laravel log.
+    |
+    */
+    'info_if' => env('STEP_DISPATCHER_INFO_IF', false),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Step Dispatcher Logging
+    |--------------------------------------------------------------------------
+    |
+    | Enable detailed logging for step execution. Logs are stored in
+    | storage/logs/steps/{step_id}/step.log and storage/logs/dispatcher.log
+    |
+    */
+    'logging' => [
+        'enabled' => env('STEP_DISPATCHER_LOGGING', false),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Valid Queues
+    |--------------------------------------------------------------------------
+    |
+    | List of valid queue names that steps can be dispatched to.
+    | The hostname-based queue is automatically added at runtime.
+    |
+    */
+    'queues' => [
+        'valid' => ['default', 'priority'],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Dispatch Settings
+    |--------------------------------------------------------------------------
+    |
+    | Configuration for the dispatcher behavior.
+    |
+    */
+    'dispatch' => [
+        // Threshold in milliseconds before a tick is considered slow
+        'warning_threshold_ms' => 40000,
+
+        // Callback for slow dispatch warnings (receives duration in ms)
+        // Example: fn (int $durationMs) => Log::warning("Slow dispatch: {$durationMs}ms")
+        'on_slow_dispatch' => null,
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Dispatch Groups
+    |--------------------------------------------------------------------------
+    |
+    | Groups used for round-robin step assignment. Steps are distributed
+    | across these groups for parallel processing.
+    |
+    */
+    'groups' => [
+        'available' => ['group_1', 'group_2', 'group_3', 'group_4'],
+    ],
+];
