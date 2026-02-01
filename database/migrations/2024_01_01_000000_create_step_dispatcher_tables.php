@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -81,6 +82,18 @@ return new class extends Migration
             $table->timestamp('last_selected_at')->nullable()->index();
             $table->timestamps();
         });
+
+        // Seed dispatch groups from config
+        $groups = config('step-dispatcher.groups.available', ['default']);
+        $now = now();
+        foreach ($groups as $group) {
+            DB::table('steps_dispatcher')->insert([
+                'group' => $group,
+                'can_dispatch' => true,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ]);
+        }
 
         // Steps dispatcher ticks table (tick tracking)
         Schema::create('steps_dispatcher_ticks', function (Blueprint $table) {
