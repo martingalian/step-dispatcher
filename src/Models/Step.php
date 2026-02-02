@@ -26,6 +26,7 @@ use Spatie\ModelStates\HasStates;
  * @property string $type
  * @property StepStatus $state
  * @property string|null $class
+ * @property string|null $label
  * @property int|null $index
  * @property array|null $response
  * @property string|null $error_message
